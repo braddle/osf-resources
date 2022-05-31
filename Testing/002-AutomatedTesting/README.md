@@ -15,6 +15,7 @@ We are going to use Selenium to perform automated testing on a webapp.
 - Open the FizzBuzzSeleniumTests class and start implementing the tests!
 - Once you have written a test you can run the test class or specific test by pressing the green buttons
   shown on the left below.
+
   ![img.png](resources/runTest.png)
 - Or run all tests with `./mvnw test`
 
@@ -24,7 +25,8 @@ We are going to use Selenium to perform automated testing on a webapp.
 
 We are performing E2E tests which mean that we need the application actually running whilst the tests are being
 executed. To do this we look at the code below.
-![img.png](resources/RunningAppDuringTest.png)
+
+![img.png](resources/RunningAppDuringTest.png)  
 The @SpringBootTest annotation takes in the name of our application class that runs the server. This then ensures that
 when a test case is run, the server is launched beforehand.  
 You will also see that @SpringBootTest takes in another argument of webEnvironment. We use this to set a random port
@@ -33,6 +35,7 @@ that the server uses, this port is then injected using the @LocalServerPort anno
 ### Test set up
 
 As you can see we have three annotations used below.
+
 ![img_1.png](resources/BeforeAfterHooks.png)
 
 - @BeforeAll
@@ -55,6 +58,7 @@ Here is a complete list of other annotations: https://www.guru99.com/junit-annot
 ### Tests
 
 In the first test we are checking if the title is correct.
+
 ![img.png](resources/testTitle.png)
 
 1. In this test we start by navigating to the webpage.
@@ -62,6 +66,7 @@ In the first test we are checking if the title is correct.
 3. Finally, we assert whether this is correct
 
 In the next test we are trying to check if all the rules on the webpage are correct.
+
 ![img.png](resources/testRules.png)
 
 1. In this test we start by navigating to the webpage.
@@ -70,6 +75,7 @@ In the next test we are trying to check if all the rules on the webpage are corr
    Note: You can open up the inspector in your browser to better understand the structure of the webpage and how to
    traverse it with
    selenium. https://endtest.io/guides/blog/2020/07/31/a-practical-guide-for-finding-elements-with-selenium/
+
    ![img.png](resources/browser.png)
 4. We then perform another find action on the 'rules' web element to get only 1 level of divs. This step may look like
    gibberish, but it's using Xpath, when you are viewing the source code in the inspector of your browser you can right-
