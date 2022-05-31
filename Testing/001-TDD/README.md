@@ -4,8 +4,8 @@
 We are going to use TDD to implement a password validator. The user stories given below must be implemented in a TDD methodology.
 
 ## Setup
-- Ensure you have **openjdk 16+** and **maven 3.8+** installed
-- Open a terminal and navigate into the **001 - TDD** directory: `cd 001-TDD`
+- Ensure you have **openjdk 16+** installed
+- Open a terminal and navigate into the **001-TDD** directory: `cd 001-TDD`
 - Run `./mvnw clean install` to install the dependencies
 - Open the PasswordValidatorTest class and start implementing the tests!
 - Once you have written a test you can run the test class or specific unit test by pressing either of the green buttons shown on the left below.  
