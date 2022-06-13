@@ -149,6 +149,9 @@ class FizzBuzzSeleniumTests {
         for (int i=1; i<=100; i++){
             if (i % 3 == 0) expectedResultText += "fizz";
             if (i % 5 == 0) expectedResultText += "buzz";
+            else if (i % 3 != 0) {
+                expectedResultText += String.valueOf(i);
+            }
             expectedResultText += " ";
         }
         String expectedResult = expectedResultText.replaceAll("( )+"," ").trim();

@@ -38,8 +38,11 @@ public class FizzBuzzService {
         for (int i=1; i<=100; i++){
             if (i % 3 == 0) result += "fizz";
             if (i % 5 == 0) result += "buzz";
+            else if (i % 3 != 0) {
+                result += String.valueOf(i);
+            }
             result += " ";
         }
-        fizzBuzz.setGeneratedResult(result);
+        fizzBuzz.setGeneratedResult(result.replaceAll("( )+"," ").trim());
     }
 }
