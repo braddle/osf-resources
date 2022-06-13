@@ -132,16 +132,27 @@ class FizzBuzzSeleniumTests {
     }
 
     @Test
-    void GenerateTest(){
+    void GenerateButtonExistsTest(){
         driver.get(this.base + "/fizzbuzz");
         WebElement generateButton = driver.findElement(By.id("generate"));
-
-//        WebElement inputButton = driver.findElement(By.id("button-addon2"));
-//        inputButton.click();
-//        WebElement result = driver.findElement(By.id("result"));
-//        String resultText = result.getText();
-
         assertTrue(generateButton.isDisplayed());
+    }
+
+    @Test
+    void GenerateButtonCreatesTextTest(){
+        driver.get(this.base + "/fizzbuzz");
+        WebElement generateButton = driver.findElement(By.id("generate"));
+        generateButton.click();
+        WebElement result = driver.findElement(By.id("generated-result"));
+        String resultText = result.getText();
+        String expectedResultText = "";
+        for (int i=1; i<=100; i++){
+            if (i % 3 == 0) expectedResultText += "fizz";
+            if (i % 5 == 0) expectedResultText += "buzz";
+            expectedResultText += " ";
+        }
+        String expectedResult = expectedResultText.replaceAll("( )+"," ").trim();
+        assertEquals(expectedResult, resultText);
     }
 
 
