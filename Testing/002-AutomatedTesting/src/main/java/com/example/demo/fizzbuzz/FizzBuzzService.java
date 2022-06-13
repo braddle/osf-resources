@@ -32,4 +32,15 @@ public class FizzBuzzService {
             fizzBuzz.setResult(result);
         }
     }
+
+    public static void generate(FizzBuzz fizzBuzz){
+        String result = "";
+        for (int i=0; i<100; i++){
+            if (i % 3 == 0) result += "fizz";
+            if (i % 5 == 0) result += "buzz";
+            result += " ";
+        }
+        System.out.println(result);
+        fizzBuzz.setGeneratedResult(result);
+    }
 }

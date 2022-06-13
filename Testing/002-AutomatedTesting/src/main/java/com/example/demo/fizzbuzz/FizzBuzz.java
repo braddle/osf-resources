@@ -5,6 +5,7 @@ public class FizzBuzz {
 
     private int validatedInput;
     private String result;
+    private String generatedResult;
     private boolean errorState;
     private String error;
 
@@ -47,5 +48,10 @@ public class FizzBuzz {
     public String getInput() {
         return input;
     }
+
+    public String getGeneratedResult(){return generatedResult;}
+
+    public void setGeneratedResult(String generatedResult){this.generatedResult = generatedResult;}
+
 
 }

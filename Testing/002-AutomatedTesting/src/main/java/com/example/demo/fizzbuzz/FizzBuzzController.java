@@ -16,5 +16,13 @@ public class FizzBuzzController {
         return "fizzbuzz";
     }
 
+    @GetMapping("/fizzbuzz/generate")
+    public String generate(Model model) {
+        FizzBuzz fizzBuzz = new FizzBuzz("");
+        FizzBuzzService.generate(fizzBuzz);
+        model.addAttribute("fizzbuzz", fizzBuzz);
+        return "fizzbuzz";
+    }
+
 }
 

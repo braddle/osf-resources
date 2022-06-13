@@ -19,7 +19,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = DemoApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -79,6 +81,67 @@ class FizzBuzzSeleniumTests {
 
         // Check the list contains what we expected
         assertEquals(expectedRules, actualRules);
+    }
+
+    @Test
+    void InvalidInputTest(){
+        driver.get(this.base + "/fizzbuzz");
+        WebElement inputBox = driver.findElement(By.id("fbinput"));
+        inputBox.sendKeys("qwerty");
+        WebElement inputButton = driver.findElement(By.id("button-addon2"));
+        inputButton.click();
+        WebElement error = driver.findElement(By.id("error-message"));
+        String errorMessage = error.getText();
+        assertEquals(errorMessage, "Input must be an integer");
+    }
+
+    @Test
+    void MultipleOfThreeTest(){
+        driver.get(this.base + "/fizzbuzz");
+        WebElement inputBox = driver.findElement(By.id("fbinput"));
+        inputBox.sendKeys("3");
+        WebElement inputButton = driver.findElement(By.id("button-addon2"));
+        inputButton.click();
+        WebElement result = driver.findElement(By.id("result"));
+        String resultText = result.getText();
+        assertEquals(resultText, "fizz");
+    }
+
+    @Test
+    void MultipleOfFiveTest(){
+        driver.get(this.base + "/fizzbuzz");
+        WebElement inputBox = driver.findElement(By.name("fbinput"));
+        inputBox.sendKeys("5");
+        WebElement inputButton = driver.findElement(By.id("button-addon2"));
+        inputButton.click();
+        WebElement result = driver.findElement(By.id("result"));
+        String resultText = result.getText();
+        assertEquals(resultText, "buzz");
+    }
+
+    @Test
+    void MultipleOfFiveAndThreeTest(){
+        driver.get(this.base + "/fizzbuzz");
+        WebElement inputBox = driver.findElement(By.name("fbinput"));
+        inputBox.sendKeys("15");
+        WebElement inputButton = driver.findElement(By.id("button-addon2"));
+        inputButton.click();
+        WebElement result = driver.findElement(By.id("result"));
+        String resultText = result.getText();
+        assertEquals(resultText, "fizzbuzz");
+    }
+
+    @Test
+    void GenerateTest(){
+        driver.get(this.base + "/fizzbuzz");
+        WebElement generateButton = driver.findElement(By.id("generate"));
+
+//        WebElement inputButton = driver.findElement(By.id("button-addon2"));
+//        inputButton.click();
+//        WebElement result = driver.findElement(By.id("result"));
+//        String resultText = result.getText();
+
+        assertTrue(generateButton.isDisplayed());
     }
 
 

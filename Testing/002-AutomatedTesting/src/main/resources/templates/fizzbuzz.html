@@ -37,13 +37,19 @@
         <p id="error-message" th:hidden="${!fizzbuzz.getErrorState()}" th:style="'color: red;'"
            th:text="${fizzbuzz.getError()}"/>
         <p id="result" th:text="${fizzbuzz.getResult()}"/>
+        <p id="generated-result" th:text="${fizzbuzz.getGeneratedResult()}"/>
         <div class="w-25">
             <form action="/fizzbuzz" id="form">
                 <div class="input-group mb-3">
                     <input aria-describedby="button-addon2" aria-label="Enter value" class="form-control" id="fbinput"
                            name="fbinput" placeholder="Enter value" type="text">
-                    <button class="btn btn-outline-info" id="button-addon2" type="submit">Enter</button>
+                    <button class="btn btn-outline-info" id="button-addon2" type="submit" value="enter">Enter</button>
+
                 </div>
+            </form>
+            </div>
+            <form action="/fizzbuzz/generate">
+                <button class="btn btn-outline-info" id="generate" type="submit" value="generate">Generate</button>
             </form>
         </div>
     </div>
