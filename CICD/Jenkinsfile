@@ -5,17 +5,20 @@ pipeline {
         stage("build") {
             steps {
                 echo "build stage..."
-                sh "cd CICD"
-                sh "ls -al"
-                sh "mvnw clean install -DskipTests"
+                dir("CICD"){
+                    sh "ls -al"
+                    sh "./mvnw clean install -DskipTests"
+                }
             }
         }
 
         stage("test") {
             steps {
                 echo "build stage..."
-                sh "cd CICD"
-                sh "mvnw test"
+                dir("CICD"){
+                    sh "ls -al"
+                    sh "./mvnw test"
+                }
             }
         }
 
