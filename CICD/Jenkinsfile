@@ -3,6 +3,9 @@ pipeline {
 
     stages {
         stage("build") {
+            tools {
+               jdk "jdk-1.8.101"
+            }
             steps {
                 echo "build stage..."
                 dir("CICD"){
@@ -13,6 +16,9 @@ pipeline {
         }
 
         stage("test") {
+            tools {
+                jdk "jdk-1.8.101"
+            }
             steps {
                 echo "build stage..."
                 dir("CICD"){
