@@ -9,7 +9,7 @@ pipeline {
             steps {
                 echo "build stage..."
                 dir("CICD"){
-                    sh "ls -al"
+                    sh "java -version"
                     sh "./mvnw clean install -DskipTests"
                 }
             }
