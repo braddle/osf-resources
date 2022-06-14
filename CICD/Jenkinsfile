@@ -6,7 +6,7 @@ pipeline {
             steps {
                 echo "build stage..."
                 sh "cd CICD"
-                sh "./mvnw clean install -DskipTests"
+                sh "mvnw clean install -DskipTests"
             }
         }
 
@@ -14,7 +14,7 @@ pipeline {
             steps {
                 echo "build stage..."
                 sh "cd CICD"
-                sh "./mvnw test"
+                sh "mvnw test"
             }
         }
 
