@@ -5,14 +5,16 @@ pipeline {
         stage("build") {
             steps {
                 echo "build stage..."
-                sh "pwd"
-                sh "ls"
+                sh "cd CICD"
+                sh "./mvnw clean install -DskipTests"
             }
         }
 
         stage("test") {
             steps {
                 echo "build stage..."
+                sh "cd CICD"
+                sh "./mvnw test"
             }
         }
 
