@@ -3,12 +3,13 @@ pipeline {
 
     stages {
         stage("build") {
-            tools {
-               jdk "jdk-18"
-            }
             steps {
                 echo "build stage..."
                 dir("CICD"){
+                    jdk = tool name: 'JDK17'
+                    env.JAVA_HOME = "${jdk}"
+                    echo "jdk installation path is: ${jdk}"
+                    sh "${jdk}/bin/java -version"
                     sh "java -version"
                     sh "./mvnw clean install -DskipTests"
                 }
