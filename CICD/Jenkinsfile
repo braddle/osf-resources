@@ -6,6 +6,7 @@ pipeline {
             steps {
                 echo "build stage..."
                 sh "cd CICD"
+                sh "ls -al"
                 sh "mvnw clean install -DskipTests"
             }
         }
