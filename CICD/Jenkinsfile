@@ -1,11 +1,14 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+          image 'openjdk:18.0.1.1-jdk'
+          args '-p 3000:3000'
+        }
+    }
 
     stages {
         stage("build") {
             steps {
-                env.JAVA_HOME="${tool 'jdk-18'}"
-                env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
                 sh 'java -version'
                 echo "build stage..."
                 dir("CICD"){
@@ -17,8 +20,6 @@ pipeline {
 
         stage("test") {
             steps {
-                env.JAVA_HOME="${tool 'jdk-18'}"
-                env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
                 sh 'java -version'
                 echo "build stage..."
                 dir("CICD"){
