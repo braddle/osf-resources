@@ -1,9 +1,11 @@
 pipeline {
-    agent {
-        docker { image 'openjdk:18.0.1.1-jdk' }
-    }
+    agent any
+
     stages {
         stage("build") {
+            tools {
+               jdk "jdk-18"
+            }
             steps {
                 echo "build stage..."
                 dir("CICD"){
