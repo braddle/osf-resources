@@ -1,7 +1,6 @@
 pipeline {
-    agent any
-    tools {
-        jdk "jdk-18"
+    agent {
+        docker { image 'openjdk:18.0.1.1-jdk' }
     }
     stages {
         stage("build") {
