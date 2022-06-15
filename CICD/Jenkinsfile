@@ -3,9 +3,9 @@ pipeline {
 
     stages {
         stage("build") {
-            tools {
-               jdk "jdk-18"
-            }
+            env.JAVA_HOME="${tool 'jdk-18'}"
+            env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
+            sh 'java -version'
             steps {
                 echo "build stage..."
                 dir("CICD"){
