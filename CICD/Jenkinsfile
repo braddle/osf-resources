@@ -3,10 +3,10 @@ pipeline {
 
     stages {
         stage("build") {
-            env.JAVA_HOME="${tool 'jdk-18'}"
-            env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
-            sh 'java -version'
             steps {
+                env.JAVA_HOME="${tool 'jdk-18'}"
+                env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
+                sh 'java -version'
                 echo "build stage..."
                 dir("CICD"){
                     sh "java -version"
@@ -16,10 +16,10 @@ pipeline {
         }
 
         stage("test") {
-            tools {
-                jdk "jdk-18"
-            }
             steps {
+                env.JAVA_HOME="${tool 'jdk-18'}"
+                env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
+                sh 'java -version'
                 echo "build stage..."
                 dir("CICD"){
                     sh "ls -al"
