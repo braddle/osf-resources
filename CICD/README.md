@@ -1,119 +1,368 @@
-# Automated Testing with Selenium
+# Jenkins pipelines
 
 ## Goal
 
-We are going to use Selenium to perform automated testing on a webapp.
+We are going to create a Jenkins pipeline that compiles, tests and deploys our application.
 
 ## Setup
 
-- Ensure you have **openjdk 16+** installed
-- Open a terminal and navigate into the **002-AutomatedTesting** directory: `cd 002-AutomatedTesting`
-- Run `./mvnw clean install` to install the dependencies
-- Run the application `./mvnw spring-boot:run`
-- Ensure you can visit the application in the browser `http://localhost:8080/fizzbuzz`
-- Play around, understand what it should
-- Open the FizzBuzzSeleniumTests class and start implementing the tests!
-- Once you have written a test you can run the test class or specific test by pressing the green buttons
-  shown on the left below.
+We are going to create two containers. One that runs our jenkins instance and the other will be used as a runner to
+execute Docker commands inside the Jenkins pipeline.
 
-  ![img.png](resources/runTest.png)
-- Or run all tests with `./mvnw test`
+1. Ensure you have **Docker desktop** installed
+2. Open up a terminal window
+3. Create a bridge network in Docker using the following docker network create command:
+   `docker network create jenkins`
+4. In order to execute Docker commands inside Jenkins nodes, download and run the docker:dind Docker image using the
+   following docker run command:
+    ```bash
+    docker run \
+      --name jenkins-docker \
+      --rm \
+      --detach \
+      --privileged \
+      --network jenkins \
+      --network-alias docker \
+      --env DOCKER_TLS_CERTDIR=/certs \
+      --volume jenkins-docker-certs:/certs/client \
+      --volume jenkins-data:/var/jenkins_home \
+      --publish 2376:2376 \
+      --publish 3000:3000 \
+      docker:dind \
+      --storage-driver overlay2 
+    ```
+5. Now you should see the container running like so in Docker Desktop.
+   ![img.png](resources/dockerdesktop.png)
+6. Next we need to build to Docker image from the Dockerfile: `docker build -t myjenkins-blueocean:2.332.3-1 .`
+   Keep in mind that the process described above will automatically download the official Jenkins Docker image if this
+   hasn’t been done before.
+7. Now you can create a container from the image you have just created:
+    ```
+   docker run \
+    --name jenkins-blueocean \
+    --detach \
+    --network jenkins \
+    --env DOCKER_HOST=tcp://docker:2376 \
+    --env DOCKER_CERT_PATH=/certs/client \
+    --env DOCKER_TLS_VERIFY=1 \
+    --publish 8080:8080 \
+    --publish 50000:50000 \
+    --volume jenkins-data:/var/jenkins_home \
+    --volume jenkins-docker-certs:/certs/client:ro \
+    --volume "$HOME":/home \
+    --restart=on-failure \
+    --env JAVA_OPTS="-Dhudson.plugins.git.GitSCM.ALLOW_LOCAL_CHECKOUT=true" \
+    myjenkins-blueocean:2.332.3-1
+    ```
+8. We should now see both conatiners running in Docker Desktop
+   ![img.png](resources/dockerDesktop2.png)
 
-## How do the tests work?
+## Unlocking Jenkins
 
-### Class set up
+We now need to perform a series of one time steps to unlock our Jenkins instance.
 
-We are performing E2E tests which mean that we need the application actually running whilst the tests are being
-executed. To do this we look at the code below.
+1. Go to http://localhost:8080 and you should see the Jenkins unlock page
+   ![img.png](resources/unlockJenkins.png)
+   Unlock Jenkins page
+2. Display the Jenkins console log with the command: `docker logs jenkins-blueocean`
+3. From your terminal/command prompt window again, copy the automatically-generated alphanumeric password (between the 2
+   sets of asterisks).
+   ![img.png](resources/jenkinsPassword.png)
+4. On the Unlock Jenkins page, paste this password into the Administrator password field and click Continue.
 
-![img.png](resources/RunningAppDuringTest.png)  
-The @SpringBootTest annotation takes in the name of our application class that runs the server. This then ensures that
-when a test case is run, the server is launched beforehand.  
-You will also see that @SpringBootTest takes in another argument of webEnvironment. We use this to set a random port
-that the server uses, this port is then injected using the @LocalServerPort annotation for use in the tests.
+### Customizing Jenkins with plugins
 
-### Test set up
+1. After unlocking Jenkins, the Customize Jenkins page appears.
 
-As you can see we have three annotations used below.
+2. On this page, click Install suggested plugins.
 
-![img_1.png](resources/BeforeAfterHooks.png)
+3. The setup wizard shows the progression of Jenkins being configured and the suggested plugins being installed. This
+   process may take a few minutes.
 
-- @BeforeAll
-    - This annotation ensures that the method below it runs before any test is executed. It runs only once and at the
-      very start of the test.
-    - In this case it is used to set up the Chrome driver. This driver is then used to control the Chrome browser when
-      the tests are run.
-- @BeforeEach
-    - This annotation ensure that the method below it runs once *before each* test. Unlike BeforeAll which only runs
-      once regardless of the number of tests you are running.
-    - It is used to create a new instance of the ChromeDriver and set the base url to our localserver and whatever port
-      has been chosen.
-- @AfterEach
-    - This annotation ensure that the method below it runs once *after each* test.
-    - It is used to close down the browser and end the session. It is good practice to do this between tests as you cna
-      then ensure that the next test will not be tainted by any previous runs.
+### Creating the first administrator user
 
-Here is a complete list of other annotations: https://www.guru99.com/junit-annotations-api.html
+1. Finally, Jenkins asks you to create your first administrator user.
 
-### Tests
+2. When the Create First Admin User page appears, specify your details in the respective fields and click Save and
+   Finish.
+3. When the Jenkins is ready page appears, click Start using Jenkins.
 
-In the first test we are checking if the title is correct.
+**Notes:**
 
-![img.png](resources/testTitle.png)
+- This page may indicate Jenkins is almost ready! instead and if so, click Restart.
+- If the page doesn’t automatically refresh after a minute, use your web browser to refresh the page manually.
+- If required, log in to Jenkins with the credentials of the user you just created and you’re ready to start using
+  Jenkins!
 
-1. In this test we start by navigating to the webpage.
-2. We then call getTitle() on the driver to pull the title string from the webpage.
-3. Finally, we assert whether this is correct
+### Create your own git project
 
-In the next test we are trying to check if all the rules on the webpage are correct.
+You will need to create your own repository that will then link with Jenkins.
 
-![img.png](resources/testRules.png)
+1. Copy the contents of the CICD folder into a new directory.
+2. Run `git init`
 
-1. In this test we start by navigating to the webpage.
-2. We then find the element in the page which has the id 'rules'
-3. This then returns an element that has 8 divs, 4 parents and 4 children.
-   Note: You can open up the inspector in your browser to better understand the structure of the webpage and how to
-   traverse it with
-   selenium. https://endtest.io/guides/blog/2020/07/31/a-practical-guide-for-finding-elements-with-selenium/
+### Create your Pipeline project in Jenkins
 
-   ![img.png](resources/browser.png)
-4. We then perform another find action on the 'rules' web element to get only 1 level of divs. This step may look like
-   gibberish, but it's using Xpath, when you are viewing the source code in the inspector of your browser you can right-
-   click the code > copy > as xpath. So you will rarely need to figure it out yourself.
-5. We then call getText on the 4 children elements that we have found and add them to the list.
-6. Finally, we assert that the rules are inline with what we were expecting.
+Go back to Jenkins, log in again if necessary and click create new jobs under Welcome to Jenkins!  
+Note: If you don’t see this, click New Item at the top left.
 
-## Activity
+In the Enter an item name field, specify the name for your new Pipeline project (e.g. example-pipeline).
 
-### Sprint 1
+Scroll down and click Pipeline, then click OK at the end of the page.
 
-You have just delivered the FizzBuzz webapp. The number of E2E tests are lacking and the product owner would like them
-to be expanded.
+( Optional ) On the next page, specify a brief description for your Pipeline in the Description field (e.g. An
+entry-level Pipeline demonstrating how to use Jenkins to build a simple Node.js and React application with npm.)
 
-> #### SEL-FEAT-394
-> As a product owner, I want all the fizzbuzz test cases implemented in the E2E tests, so that I can have a
-> regression suite.
-> #### Acceptance Criteria
->- [ ] Invalid input is tested
->- [ ] Multiples of 3 are tested
->- [ ] Multiples of 5 are tested
->- [ ] Multiples of both 3 and 5 are tested
+Click the Pipeline tab at the top of the page to scroll down to the Pipeline section.
 
-### Sprint 2
+From the Definition field, choose the Pipeline script from SCM option. This option instructs Jenkins to obtain your
+Pipeline from Source Control Management (SCM), which will be your locally cloned Git repository.
 
-Since you successfully delivered the E2E tests in the last sprint, new development on the application has become much
-safer as the suite of tests are able to verify there hasn't been any breaking changes.
+From the SCM field, choose Git.
 
-The product owner has now asked for extra functionality that allows a user to generate the sequence for the first 100
-numbers.
+In the Repository URL field, specify the directory path of your locally cloned repository above, which is from your user
+account/home directory on your host machine, mapped to the /home directory of the Jenkins container - i.e.
 
-> #### SEL-FEAT-049
-> As a product owner, I want the user to be able to generate the FizzBuzz sequence for the first 100 numbers.
-> #### Acceptance Criteria
->- [ ] A button named 'Generate' populates the screen with the first 100 terms of the fizzbuzz sequence
->- [ ] The new functionality has E2E tests.
+For macOS - /home/Documents/CICD
 
-## Further help
+For Linux - /home/CICD
 
-How to find elements on the page: https://www.guru99.com/find-element-selenium.html
-How to interact with elements: https://www.guru99.com/accessing-forms-in-webdriver.html
+For Windows - /home/Documents/CICD
+
+Click Save to save your new Pipeline project. You’re now ready to begin creating your Jenkinsfile, which you’ll be
+checking into your locally cloned Git repository.
+
+### Create your initial Pipeline as a Jenkinsfile
+
+You’re now ready to create your Pipeline that will automate building your Node.js and React application in Jenkins. Your
+Pipeline will be created as a `Jenkinsfile`, which will be committed to your repository.
+
+This is the foundation of "Pipeline-as-Code", which treats the continuous delivery pipeline as a part of the application
+to be versioned and reviewed like any other code.
+
+We will start by creating a pipeline that has a "Build" stage.
+
+Using your favorite text editor or IDE, create and save new text file with the name `Jenkinsfile` at the root of your
+local `CICD` Git repository.
+
+Copy the following Declarative Pipeline code and paste it into your empty Jenkinsfile:
+
+```
+pipeline {
+    agent {
+        docker {
+            image 'node:lts-bullseye-slim' 
+            args '-p 3000:3000' 
+        }
+    }
+    stages {
+        stage('Build') { 
+            steps {
+                sh 'npm install' 
+            }
+        }
+    }
+}
+```
+
+### What does this all mean?
+
+1. The `image` parameter (of the agent section’s docker parameter) downloads the node:lts-bullseye-slim Docker image (if
+   it’s not already available on your machine) and runs this image as a separate container.
+
+This means that:
+
+- You’ll have separate Jenkins and Node containers running locally in Docker.
+
+- The Node container becomes the agent that Jenkins uses to run your Pipeline project. However, this container is
+  short-lived - its lifespan is only that of the duration of your Pipeline’s execution.
+
+2. The args parameter makes the Node container (temporarily) accessible through port 3000. This will be used later when
+   we 'deploy' our application
+
+3. The `stage` setion of the code, defines a stage called Build that appears on the Jenkins UI.
+4. The `sh` step (of the steps section) executes the npm command to ensure that all dependencies required to run your
+   application have been downloaded to the node_modules workspace directory.  
+   Note: **If you want to run a shell command in the pipeline you need to put `sh` before it.**
+
+Save your edited Jenkinsfile and commit it to your local `CICD` Git repository. E.g. Within the `CICD` directory, run
+the commands:  
+`git add .`  
+`git commit -m "Add initial Jenkinsfile"`
+
+Go back to Jenkins again, log in again if necessary and click Open Blue Ocean on the left to access Jenkins’s Blue Ocean
+interface.
+
+In the `This job has not been run` message box, click Run, then quickly click the OPEN link which appears briefly at the
+lower-right to see Jenkins building your Pipeline project. If you weren’t able to click the OPEN link, click the row on
+the main Blue Ocean interface to access this feature.
+
+Note: You may need to wait several minutes for this first run to complete. After making a clone of your local `CICD` Git
+repository itself, Jenkins:
+
+- Initially queues the project to be run on the agent.
+
+- Downloads the Node Docker image and runs it in a container on Docker.
+
+- Downloading Node Docker image
+
+- Runs the Build stage (defined in the Jenkinsfile) on the Node container. During this time, npm downloads many
+  dependencies necessary to run your Node.js and React application, which will ultimately be stored in the node_modules
+  workspace directory (within the Jenkins home directory).
+
+- Downloading 'npm' dependencies
+
+The Blue Ocean interface turns green if Jenkins built your Node.js and React application successfully.
+
+![Initial Pipeline runs successfully](resources/build.png)
+
+Click the X at the top-right to return to the main Blue Ocean interface.
+
+### Add a test stage to your Pipeline
+
+Go back to your text editor/IDE and ensure your Jenkinsfile is open.
+
+Copy and paste the following Declarative Pipeline syntax immediately under the Build stage:
+
+```
+stage('Test') {
+   steps {
+       sh 'npm test'
+   }
+}
+```
+
+so that you end up with:
+
+```
+pipeline {
+    agent {
+        docker {
+            image 'node:lts-bullseye-slim' 
+            args '-p 3000:3000' 
+        }
+    }
+    stages {
+        stage('Build') { 
+            steps {
+                sh 'npm install' 
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'npm test'
+            }
+        }
+    }
+}
+```
+
+Save your edited Jenkinsfile and commit it to your local `CICD` Git repository. E.g. Within the `CICD` directory, run
+the commands:  
+`git add .`  
+`git commit -m "Add 'Test' stage"`
+
+Go back to Jenkins again, log in again if necessary and ensure you’ve accessed Jenkins’s Blue Ocean interface.
+
+Click Run at the top left, then quickly click the OPEN link which appears briefly at the lower-right to see Jenkins
+running your amended Pipeline project. If you weren’t able to click the OPEN link, click the top row on the Blue Ocean
+interface to access this feature.
+
+Note: You’ll notice from this run that Jenkins no longer needs to download the Node Docker image. Instead, Jenkins only
+needs to run a new container from the Node image downloaded previously. Also, from now on, no (new) npm dependencies
+should need to be downloaded during the "Build" stage. Therefore, running your Pipeline this subsequent time should be
+much faster.
+If your amended Pipeline ran successfully, here’s what the Blue Ocean interface should look like. Notice the
+additional "Test" stage. You can click on the previous "Build" stage circle to access the output from that stage.
+
+![img.png](resources/test.png)
+
+Click the X at the top-right to return to the main Blue Ocean interface.
+
+### Add a final deliver stage to your Pipeline
+
+Go back to your text editor/IDE and ensure your Jenkinsfile is open.
+
+Copy and paste the following Declarative Pipeline syntax immediately under the Test stage of your Jenkinsfile:
+
+```
+stage('Deliver') {
+   steps {
+       sh './jenkins/scripts/deliver.sh'
+       input message: 'Finished using the web site? (Click "Proceed" to continue)'
+       sh './jenkins/scripts/kill.sh'
+   }
+}
+```
+
+so that you end up with:
+
+```
+pipeline {
+    agent {
+        docker {
+            image 'node:lts-bullseye-slim' 
+            args '-p 3000:3000' 
+        }
+    }
+    stages {
+        stage('Build') { 
+            steps {
+                sh 'npm install' 
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'npm test'
+            }
+        }
+        stage('Deliver') {
+            steps {
+                sh './jenkins/scripts/deliver.sh'
+                input message: 'Finished using the web site? (Click "Proceed" to continue)'
+                sh './jenkins/scripts/kill.sh'
+            }
+        }
+    }
+}
+```
+
+This input step (provided by the Pipeline: Input Step plugin) pauses the running build and prompts the user (with a
+custom message) to proceed or abort.
+
+Save your edited Jenkinsfile and commit it to your local `CICD` Git repository. E.g. Within the `CICD` directory, run
+the commands:  
+`git stage .`  
+`git commit -m "Add 'Deliver' stage"`
+
+Go back to Jenkins again, log in again if necessary and ensure you’ve accessed Jenkins’s Blue Ocean interface.
+
+Click Run at the top left, then quickly click the OPEN link which appears briefly at the lower-right to see Jenkins
+running your amended Pipeline project. If you weren’t able to click the OPEN link, click the top row on the Blue Ocean
+interface to access this feature.
+If your amended Pipeline ran successfully, here’s what the Blue Ocean interface should look like. Notice the
+additional "Deliver" stage. Click on the previous "Test" and "Build" stage circles to access the outputs from those
+stages.
+
+![img_1.png](resources/deliver.png)
+
+Ensure you are viewing the "Deliver" stage (click it if necessary), then click the green ./jenkins/scripts/deliver.sh
+step to expand its content and scroll down until you see the http://localhost:3000 link.
+
+![img.png](img.png)
+
+Click the http://localhost:3000 link to view your Node.js and React application running (in development mode) in a new
+web browser tab. You should see a page/site with the title Welcome to React on it.
+
+## Wrapping up
+
+Well done! You’ve just used Jenkins to build a simple Node.js and React application with npm!
+
+The "Build", "Test" and "Deliver" stages you created above are the basis for building more complex Node.js and React
+applications in Jenkins, as well as Node.js and React applications that integrate with other technology stacks.
+
+## Extra tasks
+
+- What other stages could you add? (Code coverage tests, code quality tests)
+- Can you set up a remote repo and force the pipeline to trigger on every push?
+- How could you deploy this to somewhere like Heroku?
