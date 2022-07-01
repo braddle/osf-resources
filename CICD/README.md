@@ -37,7 +37,8 @@ execute Docker commands inside the Jenkins pipeline.
    Keep in mind that the process described above will automatically download the official Jenkins Docker image if this
    hasn’t been done before.
 7. Now you can create a container from the image you have just created:
-    ```
+   For Mac or Linux:
+   ```
    docker run \
     --name jenkins-blueocean \
     --detach \
@@ -54,7 +55,25 @@ execute Docker commands inside the Jenkins pipeline.
     --env JAVA_OPTS="-Dhudson.plugins.git.GitSCM.ALLOW_LOCAL_CHECKOUT=true" \
     myjenkins-blueocean:2.332.3-1
     ```
-8. We should now see both conatiners running in Docker Desktop
+   For Windows:
+   ```
+   docker run \
+    --name jenkins-blueocean \
+    --detach \
+    --network jenkins \
+    --env DOCKER_HOST=tcp://docker:2376 \
+    --env DOCKER_CERT_PATH=/certs/client \
+    --env DOCKER_TLS_VERIFY=1 \
+    --publish 8080:8080 \
+    --publish 50000:50000 \
+    --volume jenkins-data:/var/jenkins_home \
+    --volume jenkins-docker-certs:/certs/client:ro \
+    --volume ${HOME}:/home \
+    --restart=on-failure \
+    --env JAVA_OPTS="-Dhudson.plugins.git.GitSCM.ALLOW_LOCAL_CHECKOUT=true" \
+    myjenkins-blueocean:2.332.3-1
+   ```
+9. We should now see both conatiners running in Docker Desktop
    ![img.png](resources/dockerDesktop2.png)
 
 ## Unlocking Jenkins
