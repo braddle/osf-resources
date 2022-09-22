@@ -1,12 +1,17 @@
 # Deploy a Spring Web App inside a container
 
-## Setup
+## Prerequisites
+Make sure you have already installed both Docker Engine and Docker Compose. You don’t need to install Python or Redis, as both are provided by Docker images.  
+Docker desktop: https://docs.docker.com/compose/install/
+
+## Activity
+### Setup
 I have included a very simple web app in the directory that launches a web server on port 8080 and displays a hello world message.  
 You can launch this server by performing following:
 - `./mvnw package && java -jar target/containerDemo-0.0.1-SNAPSHOT.jar`  
 - Then go to localhost:8080 to see your “Hello Docker World” message.
 
-## Containerise It
+### Containerise It
 Docker has a simple "Dockerfile" file format that it uses to specify the “layers” of an image.  
 Create the following Dockerfile in your Spring Boot project:
 
@@ -17,7 +22,7 @@ COPY ${JAR_FILE} app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
 ```
 
-## What does this mean?
+### What does this mean?
 **FROM** - This instruction sets the Base Image for subsequent instructions. As such, a valid Dockerfile must start with a FROM instruction. The image can be any valid image – it is especially easy to start by pulling an image from the Public Repositories.  
 
 **ARG** - The ARG instruction defines a variable that users can pass at build-time to the builder with the docker build command using the --build-arg <varname>=<value> flag or it can be set in the Dockerfile like we are doing. If a user specifies a build argument that was not defined in the Dockerfile, the build outputs a warning. A Dockerfile may include one or more ARG instructions.   
@@ -28,14 +33,14 @@ ENTRYPOINT ["java","-jar","/app.jar"]
 
 You can build the image from the Dockerfile with the following command:
 
-## Building the image
+### Building the image
 `docker build -t springio/gs-spring-boot-docker .`
 
 This command builds an image and tags it as `springio/gs-spring-boot-docker`. The fullstop at the end is just specifying the directory where the Dockerfile is located relative to where the command has been run. In our case we use the full stop to represent the current directory.  
 
 This Dockerfile is very simple, but it is all you need to run a Spring Boot app with no frills: just Java and a JAR file. The build creates a spring user and a spring group to run the application. It is then copied (by the COPY command) the project JAR file into the container as app.jar, which is run in the ENTRYPOINT. The array form of the Dockerfile ENTRYPOINT is used so that there is no shell wrapping the Java process.  
 
-## Running the container
+### Running the container
 You can then run the container using:
 `docker run -p 8080:8080 springio/gs-spring-boot-docker`
 
