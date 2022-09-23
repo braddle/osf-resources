@@ -66,13 +66,27 @@ Congratulations! You have created a Docker container for a Spring Boot applicati
 ### Pushing to Container Repository (Docker Hub)
 Login to docker hub and [create](https://hub.docker.com/repository/create) a public repository call `demo-app`
 
-IMAGE
+![Creating a new public Docker Hub repo](docs/new-repo.png)
 
 Create a tag of the current latest image. using Semantic Versioning.
 
 ```shell
-docker tag {docker_hub_username}/demo-app:latest {docker_hub_username}/demo-app:v1.0.0
+docker tag {docker_hub_username}/demo-app:latest {docker_hub_username}/demo-app:1.0.0
+```
 
+You can see a list of the images and tags using the following command:
+
+```shell
+docker image ls
+```
+
+The output should look like this
+
+```
+REPOSITORY                    TAG       IMAGE ID       CREATED          SIZE
+braddle/demo-app              1.0.0     d6f5e22210a3   13 seconds ago   513MB
+braddle/demo-app              latest    d6f5e22210a3   13 seconds ago   513MB
+openjdk                       19-jdk    fafed7e8bf17   8 days ago       496MB
 ```
 
 Push the latest and the tagged builds to Container Repository (Docker Hub). We push both the latest and the tag to enable
@@ -80,8 +94,12 @@ us to pull down either the latest build or a specific tag when we want to use it
 
 ```shell
 docker push {docker_hub_username}/demo-app:latest
-docker push {docker_hub_username}/demo-app:v1.0.0
+docker push {docker_hub_username}/demo-app:1.0.0
 ```
 
 Checkout the containers on in you Repository: https://hub.docker.com/repository/docker/{docker_hub_username}/demo-app
+
+You should see a page similar to this
+
+![An image of the docker hub page for app once tags have been pushed.](docs/pushed-repo.png)
 
