@@ -3,7 +3,7 @@
 ## Prerequisites
 1. Install [Docker](https://docs.docker.com/desktop/install/mac-install/) 
 2. Install [Docker Compose](https://docs.docker.com/compose/install/)  
-3. Create an account on [Docker Hub](https://hub.docker.com/signup)
+3. Create an account on [Docker Hub](https://hub.docker.com/signup) _Just a free account_
 4. Login on Docker Desktop to your Docker Hub account
 
 ## Activity

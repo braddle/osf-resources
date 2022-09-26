@@ -30,8 +30,9 @@ You will need to open a new terminal tab/window as the dashboard will be running
 
 The following command will get the Docker container we created during the 
 [container lab](../Containerisation/containerDemo/README.md) and deploy it to the Minikube Kubernetes cluster
+
 ```shell
-kubectl create deployment demo-node --image=braddle/demo-app:v1.0.0
+kubectl create deployment demo-node --image={docker_hub_username}/demo-app:v1.0.0
 ```
 
 #### Check the deployment
@@ -112,6 +113,119 @@ minikube service demo-node
 ```
 
 This command will load the app in the web browser, and you should see `Hello Docker World`.
+
+### Scaling
+
+```shell
+kubectl scale demo-node --replicas=3
+```
+
+Check the Pods page on the dashboard. You should now see 3 Pods listed for the demo-app. 
+
+![The Pods page of the Kubernete dashboard](docs/three-pods.png)
+
+You can also check the running Pods using the kubectl
+
+```shell
+kubectl get pods
+```
+
+The output should look like this:
+
+```
+NAME                         READY   STATUS    RESTARTS   AGE
+demo-node-6b584b4f6c-hptqw   1/1     Running   0          2m45s
+demo-node-6b584b4f6c-kx5jp   1/1     Running   0          2m45s
+demo-node-6b584b4f6c-zn9x7   1/1     Running   0          5m54s
+```
+
+The deployment should now be aware of the three pods and routing traffic to all of them. Check the Deployments page on 
+the dashboard. You should now see 3 Pods listed for the demo-node.
+
+![The Pods page of the Kubernete dashboard](docs/three-pods.png)
+
+you can also check this via kubectl, using the following command:
+
+```shell
+kubectl get deployments
+```
+
+The output should look like this:
+
+```
+NAME        READY   UP-TO-DATE   AVAILABLE   AGE
+demo-node   3/3     3            3           14m
+```
+
+
+### Clean up
+
+Now you can clean up the resources you created in your cluster:
+
+```shell
+kubectl delete service demo-node
+kubectl delete deployment demo-node
+```
+
+### Apply
+
+`deployment/demo-node.yml`
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-node
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "demo-node"
+  template:
+    metadata:
+      labels:
+        app: demo-node
+        track: stable
+        version: 1.0.0
+    spec:
+      containers:
+        - name: demo-node
+          image: "braddle/demo-app:1.0.0"
+          ports:
+            - containerPort: 8080
+```
+
+```shell
+kubectl apply -f deployments/demo-node.yml
+```
+
+Expected output `deployment.apps/demo-node created`
+
+Re-running the apply command at this point should not change anything in the cluster. Expected output 
+`deployment.apps/demo-node unchanged`
+
+Update the number of replicas to 3 and re-run the apply command. Expected output `deployment.apps/demo-node configured`
+
+`services/demo-node.yml`
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: "demo"
+spec:
+  selector:
+    app: "demo-node"
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: "TCP"
+```
+
+```shell
+kubectl apply -f services/demo-node.yml
+```
+
 
 ### Clean up
 
