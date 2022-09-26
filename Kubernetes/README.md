@@ -142,7 +142,7 @@ demo-node-6b584b4f6c-zn9x7   1/1     Running   0          5m54s
 The deployment should now be aware of the three pods and routing traffic to all of them. Check the Deployments page on 
 the dashboard. You should now see 3 Pods listed for the demo-node.
 
-![The Pods page of the Kubernete dashboard](docs/three-pods.png)
+![The Pods page of the Kubernete dashboard](docs/deployments-scaled.png)
 
 you can also check this via kubectl, using the following command:
 
@@ -157,7 +157,6 @@ NAME        READY   UP-TO-DATE   AVAILABLE   AGE
 demo-node   3/3     3            3           14m
 ```
 
-
 ### Clean up
 
 Now you can clean up the resources you created in your cluster:
@@ -167,9 +166,18 @@ kubectl delete service demo-node
 kubectl delete deployment demo-node
 ```
 
-### Apply
+### Imperative Configuration
 
-`deployment/demo-node.yml`
+So far during the lab we have used declarative configuration (Using `kubectl` command to tell Kubernetes exactly what 
+containers to spin up, how many replicas to run and how to expose the Service). This is great for a demonstration but 
+trying to maintain a large number of high demand microservices doing this not maintainable.
+
+So instead of manually configuring this we can use YML files to configure. These files can be stored within your project
+repository and run by your pipelines to automate deployments and service configuration.
+
+#### Create a deployment
+
+Add the following YML configuration to `deployment/demo-node.yml`
 
 ```yaml
 apiVersion: apps/v1
@@ -195,6 +203,8 @@ spec:
             - containerPort: 8080
 ```
 
+Now you can use kubectl to apply the configuration within the file using the apply command
+
 ```shell
 kubectl apply -f deployments/demo-node.yml
 ```
@@ -205,6 +215,8 @@ Re-running the apply command at this point should not change anything in the clu
 `deployment.apps/demo-node unchanged`
 
 Update the number of replicas to 3 and re-run the apply command. Expected output `deployment.apps/demo-node configured`
+
+#### Create a Service
 
 `services/demo-node.yml`
 
@@ -225,7 +237,6 @@ spec:
 ```shell
 kubectl apply -f services/demo-node.yml
 ```
-
 
 ### Clean up
 
