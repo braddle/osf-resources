@@ -19,7 +19,7 @@ You can launch this server by performing following:
 Docker has a simple "Dockerfile" file format that it uses to specify the “layers” of an image.  
 Create the following Dockerfile in your Spring Boot project:
 
-```
+```dockerfile
 FROM openjdk:19-jdk
 ARG JAR_FILE=target/containerDemo-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} app.jar
@@ -46,7 +46,10 @@ created this is the command that will run.
 You can build the image from the Dockerfile with the following command:
 
 ### Building the image
-`docker build -t {docker_hub_username}/demo-app .`
+
+```shell
+docker build -t {docker_hub_username}/demo-app .
+```
 
 This command builds an image and tags it as `{docker_hub_username}/demo-app`. The fullstop at the end is just specifying 
 the directory where the Dockerfile is located relative to where the command has been run. In our case we use the full 
@@ -58,17 +61,69 @@ the project JAR file into the container as app.jar, which is run in the ENTRYPOI
 ENTRYPOINT is used so that there is no shell wrapping the Java process.  
 
 ### Running the container
-You can then run the container using:
-`docker run -p 8080:8080 {docker_hub_username}/demo-app`
 
-Congratulations! You have created a Docker container for a Spring Boot application! By default, Spring Boot applications run on port 8080 inside the container, and we mapped that to the same port on the host by using -p on the command line.
+You can then run the container using:
+
+```shell
+docker run -p 8080:8080 {docker_hub_username}/demo-app
+```
+
+Congratulations! You have [run a Docker container for a Spring Boot application](http://localhost:8080/)! By default, 
+Spring Boot applications run on port 8080 inside the container, and we mapped that to the same port on the host by using 
+-p on the command line.
+
+To stop the application running you can hit `ctrl-c`
+
+using docker run in this way leave you with a terminal window that is blocked showing the logs of the running 
+application. Sometimes you may want to have your application running in the background for this you can use the detached
+mode using the following command
+
+```shell
+docker run -d --name my-demo -p 8080:8080 {docker_hub_username}/demo-app
+```
+
+If you want to see what container are running you can use `docker ps` this will list all running containers. The output
+should look something like this
+
+```
+CONTAINER ID   IMAGE              COMMAND                CREATED          STATUS          PORTS                    NAMES
+39f56f4c0185   braddle/demo-app   "java -jar /app.jar"   50 seconds ago   Up 49 seconds   0.0.0.0:8080->8080/tcp   my-demo
+```
+
+The container is now running in the background enabling you to continue working in that terminal window. You can still 
+view the logs of the application if you need to by using the `logs` command
+
+```shell
+docker logs my-demo
+```
+
+you can stop the container running using the `stop` or `kill` commands:
+
+```shell
+docker stop my-demo
+```
+
+```shell
+docker kill my-demo
+```
+
+once it has stopped you can remove the container by using `docker rm my-demo`
 
 ### Pushing to Container Repository (Docker Hub)
-Login to docker hub and [create](https://hub.docker.com/repository/create) a public repository call `demo-app`
+
+Once you have a Docker container you will want to push it somewhere to make it accessible to deploy to testing and 
+production environments. Usually this would be part of your CI/CD pipeline, but today we are going to do it manaully on 
+our own laptops.
+
+
+Login to docker hub and [create](https://hub.docker.com/repository/create) a new public repository call `demo-app`
 
 ![Creating a new public Docker Hub repo](docs/new-repo.png)
 
-Create a tag of the current latest image. using Semantic Versioning.
+When you use the `docker build` command that will create a store a new version of the container tagged as `latest` this
+is similar to committing changes on git but not pushing them to the remote repository. You could just push the `latest`
+to the Container Registry but that is not best practise so first of all we will create a tag of the current latest image 
+using [Semantic Versioning](https://semver.org/).
 
 ```shell
 docker tag {docker_hub_username}/demo-app:latest {docker_hub_username}/demo-app:1.0.0
@@ -89,8 +144,9 @@ braddle/demo-app              latest    d6f5e22210a3   13 seconds ago   513MB
 openjdk                       19-jdk    fafed7e8bf17   8 days ago       496MB
 ```
 
-Push the latest and the tagged builds to Container Repository (Docker Hub). We push both the latest and the tag to enable
-us to pull down either the latest build or a specific tag when we want to use it.
+We now want to push the latest and the 1.0.0 tagged builds to Container Repository (Docker Hub). We push both the latest 
+and the tag to enable us to pull down either the latest build or a specific tag allowing us to make a descision of when 
+we upgrade. We can do this by running the following two commands:
 
 ```shell
 docker push {docker_hub_username}/demo-app:latest
