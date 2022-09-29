@@ -10,13 +10,17 @@
 
 ### Start Minikube
 
-This will spin up Minikube (A small local kubernetes cluster) within a Docker container so you can deploy Pods into it.
+The first thing we need to do is start up [Minikube](https://minikube.sigs.k8s.io). This will give us a local Kubernetes 
+cluster to deploy application to. The minikube cluster runs inside a docker container.
 
 ```shell
 minikube start
 ```
 
-Load the Kubernete dashboard. This command will start the dashboard and open it in your browser.
+
+Once minikube is up and running you can load the Kubernete dashboard. This command will start the dashboard and open it 
+in your browser. (**Note** this command blocks the terminal so all following commands will need to run in a new terminal
+window).
 
 ```shell
 minikube dashboard
@@ -26,22 +30,29 @@ Once the dashboard has loaded check on the Pods page. There should not be any po
 
 ### Create a Deployment
 
-You will need to open a new terminal tab/window as the dashboard will be running in the current one.
+We now want to deployment within the Kubernetes cluster. Today we are going to deploy the Docker container we created 
+during the [container lab](../Containerisation/containerDemo/README.md) and deploy it to the Minikube Kubernetes cluster.
 
-The following command will get the Docker container we created during the 
-[container lab](../Containerisation/containerDemo/README.md) and deploy it to the Minikube Kubernetes cluster
+We can do this using the `kubectl`. This is a local commandline tool that interacts with the Kubernetes API running 
+inside our cluster. The command below will create a deployment within our cluster called `demo-node`. It will pull the
+container from your Docker Hub (Container Resigistry). 
 
 ```shell
-kubectl create deployment demo-node --image={docker_hub_username}/demo-app:v1.0.0
+kubectl create deployment demo-node --image={docker_hub_username}/demo-app:1.0.0
 ```
+
+**Note** If you have not completed the[container lab](../Containerisation/containerDemo/README.md) before starting this 
+one you can use an instance I created on my account `braddle/demo-app:1.0.0`
 
 #### Check the deployment
 
-Check the Deployment page on the dashboard. You should now see a Deployment listed for the demo-app. 
+We can now check the Deployment page on the dashboard. You should now see a Deployment listed for the demo-app. It 
+should look something like this. This page show that there is a deployment call `demo-node` using the image 
+`braddle/demo-app:1.0.0` and it is running healthy on a single Pod.
 
 ![The deployments page of the Kubernetes dashboard](docs/deployments.png)
 
-You can also check the deployments using the kubectl
+You can also check the deployments using the `kubectl` command line tool.
 
 ```shell
 kubectl get deployments
@@ -56,8 +67,7 @@ demo-node   1/1     1            1           2m55s
 
 #### Check Pods
 
-Check the Pods page on the dashboard. You should now see a Pod listed for the demo-app. Not it may to be running 
-straight away you may have to wait a minute
+We can also check the Pods page on the dashboard. You should now see a Pod listed for the demo-app. 
 
 ![The Pods page of the Kubernete dashboard](docs/pods.png)
 
@@ -76,7 +86,7 @@ demo-node-6b584b4f6c-nfjsp   1/1     Running   0          7m22s
 
 ### Accessing The App
 
-At the moment the app is only accessible by in IP within the Kubernente cluster. We want the app to be available to the 
+At the moment the app is only accessible by in IP within the Kubernentes cluster. We want the app to be available to the 
 outside world. To do this we need to expose the Pod as a Kubernetes Service. We can do this with the following command
 
 ```shell
@@ -87,7 +97,7 @@ The `--type=LoadBalancer` flag indicates that you want to expose your Service ou
 
 #### check Service
 
-The service should not be listed on the services page of the dashboard
+The service should now be listed on the services page of the dashboard
 
 ![The Services page of the Kubernetes dashboard](docs/services.png)
 
@@ -116,11 +126,17 @@ This command will load the app in the web browser, and you should see `Hello Doc
 
 ### Scaling
 
+At the moment we have a single Pod running for our application. But what if we need to handle more load. Kubernetes 
+allows us to scale the number of Pods we want running for a deployment. We can set the number of Pods for the desired 
+state using the `scale` command of the `kubectl` command line tool. Use the command below to set the number of Replicas 
+or Pods to 3.
+
 ```shell
-kubectl scale demo-node --replicas=3
+kubectl scale deployment demo-node --replicas=3
 ```
 
-Check the Pods page on the dashboard. You should now see 3 Pods listed for the demo-app. 
+If you now check the Pods page on the dashboard. You should now see 3 Pods listed for the `demo-node` app. Kubernetes has 
+reacted to the change in the desired state and increased the number of Pods running for the `demo-node` app 
 
 ![The Pods page of the Kubernete dashboard](docs/three-pods.png)
 
@@ -224,7 +240,7 @@ Update the number of replicas to 3 and re-run the apply command. Expected output
 apiVersion: v1
 kind: Service
 metadata:
-  name: "demo"
+  name: "demo-node"
 spec:
   selector:
     app: "demo-node"
