@@ -18,7 +18,7 @@ minikube start
 ```
 
 
-Once minikube is up and running you can load the Kubernete dashboard. This command will start the dashboard and open it 
+Once minikube is up and running you can load the Kubernetes dashboard. This command will start the dashboard and open it 
 in your browser. (**Note** this command blocks the terminal so all following commands will need to run in a new terminal
 window).
 
@@ -28,14 +28,23 @@ minikube dashboard
 
 Once the dashboard has loaded check on the Pods page. There should not be any pods running yet.
 
-### Create a Deployment
+### Imperative Commands
+
+First we are going to deploy and scale an application using imperative commands. We are going to tell Kubernetes exactly 
+what we want it to do. 
+
+Using `kubectl` command to tell Kubernetes exactly what containers to spin up, how many replicas to run and how to 
+expose the Service. This is great for a demonstration but trying to maintain a large number of high demand microservices 
+doing this not maintainable.
+
+#### Create a Deployment
 
 We now want to deployment within the Kubernetes cluster. Today we are going to deploy the Docker container we created 
 during the [container lab](../Containerisation/containerDemo/README.md) and deploy it to the Minikube Kubernetes cluster.
 
 We can do this using the `kubectl`. This is a local commandline tool that interacts with the Kubernetes API running 
 inside our cluster. The command below will create a deployment within our cluster called `demo-node`. It will pull the
-container from your Docker Hub (Container Resigistry). 
+container from your Docker Hub (Container Registry). 
 
 ```shell
 kubectl create deployment demo-node --image={docker_hub_username}/demo-app:1.0.0
@@ -44,7 +53,7 @@ kubectl create deployment demo-node --image={docker_hub_username}/demo-app:1.0.0
 **Note** If you have not completed the[container lab](../Containerisation/containerDemo/README.md) before starting this 
 one you can use an instance I created on my account `braddle/demo-app:1.0.0`
 
-#### Check the deployment
+##### Check the deployment
 
 We can now check the Deployment page on the dashboard. You should now see a Deployment listed for the demo-app. It 
 should look something like this. This page show that there is a deployment call `demo-node` using the image 
@@ -65,11 +74,11 @@ NAME        READY   UP-TO-DATE   AVAILABLE   AGE
 demo-node   1/1     1            1           2m55s
 ```
 
-#### Check Pods
+##### Check Pods
 
 We can also check the Pods page on the dashboard. You should now see a Pod listed for the demo-app. 
 
-![The Pods page of the Kubernete dashboard](docs/pods.png)
+![The Pods page of the Kubernetes dashboard](docs/pods.png)
 
 You can also check the running Pods using the kubectl
 
@@ -84,9 +93,9 @@ NAME                         READY   STATUS    RESTARTS   AGE
 demo-node-6b584b4f6c-nfjsp   1/1     Running   0          7m22s
 ```
 
-### Accessing The App
+#### Accessing The App
 
-At the moment the app is only accessible by in IP within the Kubernentes cluster. We want the app to be available to the 
+At the moment the app is only accessible by in IP within the Kubernetes cluster. We want the app to be available to the 
 outside world. To do this we need to expose the Pod as a Kubernetes Service. We can do this with the following command
 
 ```shell
@@ -95,7 +104,7 @@ kubectl expose deployment demo-node --type=LoadBalancer --port=8080
 
 The `--type=LoadBalancer` flag indicates that you want to expose your Service outside the cluster.
 
-#### check Service
+##### check Service
 
 The service should now be listed on the services page of the dashboard
 
@@ -124,7 +133,7 @@ minikube service demo-node
 
 This command will load the app in the web browser, and you should see `Hello Docker World`.
 
-### Scaling
+#### Scaling
 
 At the moment we have a single Pod running for our application. But what if we need to handle more load. Kubernetes 
 allows us to scale the number of Pods we want running for a deployment. We can set the number of Pods for the desired 
@@ -138,7 +147,7 @@ kubectl scale deployment demo-node --replicas=3
 If you now check the Pods page on the dashboard. You should now see 3 Pods listed for the `demo-node` app. Kubernetes has 
 reacted to the change in the desired state and increased the number of Pods running for the `demo-node` app 
 
-![The Pods page of the Kubernete dashboard](docs/three-pods.png)
+![The Pods page of the Kubernetes dashboard](docs/three-pods.png)
 
 You can also check the running Pods using the kubectl
 
@@ -158,7 +167,7 @@ demo-node-6b584b4f6c-zn9x7   1/1     Running   0          5m54s
 The deployment should now be aware of the three pods and routing traffic to all of them. Check the Deployments page on 
 the dashboard. You should now see 3 Pods listed for the demo-node.
 
-![The Pods page of the Kubernete dashboard](docs/deployments-scaled.png)
+![The Pods page of the Kubernetes dashboard](docs/deployments-scaled.png)
 
 you can also check this via kubectl, using the following command:
 
@@ -173,7 +182,7 @@ NAME        READY   UP-TO-DATE   AVAILABLE   AGE
 demo-node   3/3     3            3           14m
 ```
 
-### Clean up
+#### Clean up
 
 Now you can clean up the resources you created in your cluster:
 
@@ -184,12 +193,14 @@ kubectl delete deployment demo-node
 
 ### Imperative Configuration
 
-So far during the lab we have used declarative configuration (Using `kubectl` command to tell Kubernetes exactly what 
-containers to spin up, how many replicas to run and how to expose the Service). This is great for a demonstration but 
-trying to maintain a large number of high demand microservices doing this not maintainable.
+So far we have configured using declarative commands to manually configure what we want Kubernetes to do. We need to know
+what the current start of the cluster is to make changes to it.
 
-So instead of manually configuring this we can use YML files to configure. These files can be stored within your project
-repository and run by your pipelines to automate deployments and service configuration.
+Alternatively we can use YML files to provide Kubernetes with our Desired State. Kubernetes will make any changes to the
+cluster when we `apply` these files to the cluster.
+
+These files can be stored within your project repository and run by your pipelines to automate deployments and service 
+configuration.
 
 #### Create a deployment
 
