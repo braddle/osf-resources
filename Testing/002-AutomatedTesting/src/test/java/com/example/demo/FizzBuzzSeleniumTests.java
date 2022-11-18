@@ -40,8 +40,11 @@ class FizzBuzzSeleniumTests {
 
     @BeforeEach
     void setupTest() {
-        driver = new ChromeDriver();
         this.base = "http://localhost:" + port;
+
+        // Open the webpage
+        driver = new ChromeDriver();
+        driver.get(this.base + "/fizzbuzz");
     }
 
     @AfterEach
@@ -51,8 +54,6 @@ class FizzBuzzSeleniumTests {
 
     @Test
     void testTitle() {
-        // Open the webpage
-        driver.get(this.base + "/fizzbuzz");
         // Get the title
         String title = driver.getTitle();
         // Check it is what we expect it to be
@@ -61,9 +62,6 @@ class FizzBuzzSeleniumTests {
 
     @Test
     void testRules() {
-        // Open the webpage
-        driver.get(this.base + "/fizzbuzz");
-
         // Find the div containing all of the rules
         WebElement rules = driver.findElement(By.id("rules"));
 
@@ -81,5 +79,63 @@ class FizzBuzzSeleniumTests {
         assertEquals(expectedRules, actualRules);
     }
 
+    @Test
+    void testTextInvalid() {
+        WebElement input = driver.findElement(By.id("fbinput"));
+        input.sendKeys("LETTERS");
 
+        WebElement button = driver.findElement(By.id("button-addon2"));
+        button.click();
+
+        WebElement output = driver.findElement(By.id("error-message"));
+        assertEquals("Input must be an integer",output.getText());
+    }
+
+    @Test
+    void testNumberNotDivisibleBy3or5Unchanged() {
+        WebElement input = driver.findElement(By.id("fbinput"));
+        input.sendKeys("1");
+
+        WebElement button = driver.findElement(By.id("button-addon2"));
+        button.click();
+
+        WebElement output = driver.findElement(By.id("result"));
+        assertEquals("1",output.getText());
+    }
+
+    @Test
+    void numberDivisibleBy3ReturnsFizz() {
+        WebElement input = driver.findElement(By.id("fbinput"));
+        input.sendKeys("3");
+
+        WebElement button = driver.findElement(By.id("button-addon2"));
+        button.click();
+
+        WebElement output = driver.findElement(By.id("result"));
+        assertEquals("fizz",output.getText());
+    }
+
+    @Test
+    void numberDivisibleBy5ReturnsBuzz() {
+        WebElement input = driver.findElement(By.id("fbinput"));
+        input.sendKeys("5");
+
+        WebElement button = driver.findElement(By.id("button-addon2"));
+        button.click();
+
+        WebElement output = driver.findElement(By.id("result"));
+        assertEquals("buzz",output.getText());
+    }
+
+    @Test
+    void numberDivisibleBy5and3ReturnsFizzBuzz() {
+        WebElement input = driver.findElement(By.id("fbinput"));
+        input.sendKeys("15");
+
+        WebElement button = driver.findElement(By.id("button-addon2"));
+        button.click();
+
+        WebElement output = driver.findElement(By.id("result"));
+        assertEquals("fizzbuzz",output.getText());
+    }
 }
