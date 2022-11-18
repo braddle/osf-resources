@@ -1,7 +1,16 @@
-# TDD Password Validator
+# TDD Leap Year Calculator
 
 ## Goal 
-We are going to use TDD to implement a password validator. The user stories given below must be implemented in a TDD methodology.
+
+This exercise involves building a Leap Year Calculator function using Test-Driven Development to evolve your design 
+iteratively. TDD gives you continuous feedback on the quality of your design whilst building confidence in your code.
+
+## Approach
+
+When doing this exercise, try to implement the function using tests to convince yourself that the code you have written 
+is correct.
+
+Implement 1 test at a time, and then write the code needed to pass the test, as per the red-green-refactor cycle.
 
 ## Setup
 - Ensure you have **openjdk 16+** installed
@@ -12,28 +21,14 @@ We are going to use TDD to implement a password validator. The user stories give
   ![Running tests](resources/runTests.png)
 - Or run all tests with `./mvnw test`
 
-## Activity
+## Functional requirements
 
-### Sprint 1
-The accounts team have requested that we enforce a password policy for new users and sent through the following user story.  
+You need to build a Leap Year Calculator function meeting the following requirements:
 
-> #### TDD-FEAT-492
-> As an account's admin team member, I want new users to have a strong password, so that account security is enforced.  
-> #### Acceptance Criteria
->- [ ] Password contains more than 8 characters
->- [ ] Password contains ≥ 1 uppercase letter
->- [ ] Password contains ≥ 1 number
->- [ ] Password contains ≥ 1 special character
-
-### Sprint 2
-Since successfully delivering the feature in the first sprint, the accounts team have received a number of complaints about the new password policy being confusing and customers are not sure why their passwrods are not acceptable. We have a new set of requirements to show a list of reasons why the password does not meet the criteria.
-
-> #### TDD-FEAT-517
-> As an account's admin team member, I want new users to know why their password is not strong enough, so that they can easily implement a password satisfying the rules.
-> #### Acceptance Criteria
->- [ ] `isValid()` is deprecated
->- [ ] New method `validate()` returns a `ValidatedPassword` object
->- [ ] `ValidatedPassword` object has attributes: `boolean isValid` and `List<String> reasons`
+1. All years divisible by 400 ARE leap years
+2. All years divisible by 100 but NOT by 400 ARE NOT leap years
+3. All years divisible by 4 but Not by 100 ARE leap years 
+4 .All years not divisible by 4 ARE NOT leap years
 
 ### Tip
 Remember the <span style="color:red">red</span> <span style="color:green">green</span> <span style="color:cyan">refactor</span> cycle.  
@@ -42,7 +37,6 @@ Remember the <span style="color:red">red</span> <span style="color:green">green<
 3. Refactor code as needed
 4. Test again
 5. Repeat
-
 
 ## Further help
 If you are not sure how to do implement a test in JUnit or not sure which annotation to use, JUnit has a great user guide linked [here](https://junit.org/junit5/docs/current/user-guide/#writing-tests), or feel free to ask me 🙂
