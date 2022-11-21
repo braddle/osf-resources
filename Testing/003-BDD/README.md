@@ -54,6 +54,8 @@ that will enable customers to
   - A customer should be able to check their current balance
   - The customer should be able to get a statement printout. It will show all transactions in the following format
 ```text
+Customer Name:
+
 Transation|Amount|Balance
 0001|+500|500
 0002|-100|400
