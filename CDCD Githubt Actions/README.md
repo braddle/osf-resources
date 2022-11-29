@@ -11,6 +11,8 @@
 We are going to create a [GitHub actions](https://github.com/features/actions) pipeline that compiles, tests and pushes 
 our application to dockerhub.
 
+You can see an example repository of this activity [here](https://github.com/braddle/cicd-lab).
+
 ### Create a new GitHub repository
 
 Locate the `+` button to create new things at the top right of the screen and click `New Repository`
