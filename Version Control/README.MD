@@ -1,53 +1,208 @@
-# Version Control - Simple Operations
-
-## Overview
-
-This is a short exercise to get you used to using Git to perform simple operation such as: cloning, staging, commiting and pushing.
+# Version Control - GitHub
 
 ## Setup
 
 - Have Git installed on your machine
-- Ensure the instructor has added your GitHub account added as a collaborator to the repository [here](https://github.com/armakuni/version-control-exercise)
-- Create a PAT token: [creating a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+- A GitHub account
 
-## Steps
+## Activity
 
-1. The first step is to clone the repository. We can achieve this using the `git clone` command followed by the URL of the repo.
+This is a short exercise to get you used to using Git to perform simple operation such as: cloning, staging, commiting,
+pushing, Pull/Merge Requests and rebasing.
 
-   git clone https://github.com/jakepeters199/bn-osf-vcs.git
+### Creating a new Repository
 
-_Note: Git will ask for your GitHub username and password. When Git prompts you for your password, enter your personal access token (PAT) instead._
+Locate the + button to create new things at the top right of the screen and click New Repository
 
-You will now have a local copy of the repository.
+![Create new dropdown](resources/new_dropdown.png)
 
-2. Navigate into the directory `cd version-control-exercise` and run `git status`. You will see that your working directory is clean as you haven't modified or added any files.
+Create a new repository call `git-practice`, add a README and Licence.
 
-   ![](./images/git_status.png)
+![](resources/create_repository.png)
 
-3. Create a text file named in the 'firstname_surname.txt' format and fill it with content of your choice. Save your changes.
+Once you have created your repository it should look something like this.
 
-4. Now re-run the `git status` command. You will see that you now have a new untracked file.
+![](resources/new_respository.png)
 
-   ![](./images/git_status2.png)
+### Cloning the Repository
 
-5. To track this file, issue the command `git add john_doe.txt` replacing the filename as appropriate.
+To edit the code in our repository we need to **clone** it. `git clone` create a directory for the code and downloads 
+the code from the repository into the new directory. We will now **clone** our new repository.
 
-   This will tell Git to start tracking the file and add it to the staging area, ready for us to commit.
+```shell
+git clone git@github.com:{YOUR_GITHUB_USERNAME}/git-practice.git
+```
 
-6. Now re-run the `git status` command again. You will now see that you now have a new tracked file ready to be commited.
+You should see something like this
 
-   ![](./images/git_status3.png)
+![](resources/clone.png)
 
-7. We now need to create a commit containing this change. To do this issue `git commit -m 'Added text file containing my amazing content'`.
+If you move into the newly create directory and check its status. The `git status` command show the current state of 
+working tree. Showing files that have been added, modified and deleted.
 
-   ![](./images/git_commit.png)
+```shell
+cd git-practice
+git status
+```
 
-   Your changes have now been commited.
+![](resources/status_1.png)
 
-8. We are now ready to upload your local repository content to a remote repository. To do this we use the `git push` command. This will upload all commits that you have to the remote repository.
+### Editing an existing file
 
-   ![](./images/git_push.png)
+Open README.md in you IDE and add some new content the file under the existing content. For example:
 
-_Note: If somebody has updated the repository since you have cloned it, you will need to issue the `git pull` command to bring your repository up to date._
+```markdown
+### About Me
 
-Congratulations, you have successfully pushed changes to a repository.
+**Name**: Mark Bradley
+**Location**: London
+**Languages**:
+  - PHP
+  - Java
+  - Golang
+```
+
+If you check the status of for local repository
+
+```shell
+git status
+```
+
+you should have one changed file where the changes have not yet been staged.
+
+If you were to commit at this point nothing would be committed because no of the changes have been staged.
+
+![](resources/status_2.png)
+
+you can see what has been changed by checking the **diff**. It shows all the lines of code we added to our README
+
+```shell
+git diff
+```
+
+![](resources/diff_1.png)
+
+If we want to commit the change and push it back to GitHub we first have to stage the change using the **add** command
+there are few ways we can do this.
+
+The first will stage all un-staged changes 
+
+```shell
+git add .
+```
+
+This will stage a specific file
+
+```shell
+git add README.md
+```
+
+or you can check the patch and stage just the change parts you want
+
+```shell
+git add -p
+```
+
+![](resources/add-p.png)
+
+![](resources/status_3.png)
+
+Now that our change has been stage we can commit our change. we can provide a commit message using the message flag`-m` 
+
+```shell
+git commit -m "A short message about our change"
+```
+
+or if you leave off the message flag and git will open a text editor for you to add a message the advantage of this way 
+is that you can add a multi-line message.
+
+```shell
+git commit
+```
+
+I recommend you read this [article](https://cloudnative.ly/what-does-a-good-commit-message-look-like-89ba44e364e0) on
+What does a good commit message look like.
+
+once you have commited your changes we can now push them up to GitHub
+
+```shell
+git push origin main
+```
+
+if you remove some of the lines you added to the README and check the diff you can see how git show changes where code 
+is removed from a file
+
+![](resources/diff_2.png)
+
+we are not going to keep these changes so we will use the **restore** command to remove the changes we have just made
+
+```shell
+git restore README.md
+```
+
+### Creating a branch
+
+Sometimes the feature we are working on is going to take a couple of days and we want to commit our changes. We can do 
+this using a branch
+
+Branches are TODO
+
+we can create a branch using the **checkout** command using the branch flag `-b`
+
+```shell
+git checkout -b add_hobbies
+```
+
+edit the README file again to add some hobbie to the bottom of you file something like
+
+```markdown
+**Hobbies**:
+  - Photography
+  - Teaching TDD
+  - Cooking
+  - Collection CDs
+```
+
+Add and commit these changes, but do not push them yet. While we were looking at the file we notice we made some 
+mistakes in the MarkDown format and have missed some line breaks. Edit you README so it now look similar to this:
+
+```markdown
+### About Me
+
+**Name**: Mark Bradley
+
+**Location**: London
+
+**Languages**:
+  - PHP
+  - Java
+  - Golang
+
+**Hobbies**:
+  - Photography
+  - Teaching TDD
+  - Cooking
+  - Collection CDs
+```
+
+Add and Commit these changes then push to you new branch
+
+```shell
+git push origin add_hobbies  
+```
+
+When we push the changes to GitHub it should show a link for us to create a Pull Request. Click this link to create the 
+Pull Request.
+
+![](resources/push_1.png)
+
+If the link does not appear when you push you will also see the suggestion to create a Pull Request at the top of the 
+repository page on GitHub.
+
+![](resources/create_pr_button.png)
+
+![](resources/create_pr.png)
+
+![](resources/new_pr.png)
+
+
