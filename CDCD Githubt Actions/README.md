@@ -9,7 +9,7 @@
 ## Activity
 
 We are going to create a [GitHub actions](https://github.com/features/actions) pipeline that compiles, tests and pushes 
-our application to dockerhub.
+our application to Docker Hub.
 
 You can see an example repository of this activity [here](https://github.com/braddle/cicd-lab).
 
@@ -23,9 +23,10 @@ Create a new empty repository call `cicd-lab` (**Do not** add a README, Licence 
 
 ![New Repository form](resources/new_repo.png)
 
-Create a new directory outside this project and copy the content of the `app` directory into it.
+Create a new directory called `cicd-lab` outside this project (I suggest creating it in your home directory) and copy the 
+content of the `app` directory into it.
 
-check the application works
+check the application works by running the following command
 
   - `npm install`
   - `npm test`
@@ -36,7 +37,7 @@ if you visit [localhost:3000](http://localhost:3000) you should see the followin
 
 ![](resources/react_app.png)
 
-Get this code into your new repository using the follwing command line commands
+We now want to get the application code into the new repository using the following commands;
   - `git init`
   - `git add .`
   - `git commit -m "Adding default application code to repo"`
@@ -50,8 +51,9 @@ If all of this is successful you repository on GitHub should now look something 
 
 ### Creating a First (Test) Stage in the Pipeline
 
-We are now going to create the first part of our Pipeline. This will react to any changes to a branch a run the 
-test for our application
+We are now going to create the first part of our Pipeline. This pipeline will be run when any changes to any branch are 
+push to GitHub. This stage of the pipeline with install the dependcies of our application (`npm install`) and run the 
+test again the application (`npm test`).
 
 #### Define the Pipeline
 
@@ -92,7 +94,7 @@ different runners [here](https://docs.github.com/en/actions/using-jobs/choosing-
 
 **steps** - The jobs are broken down into steps these run synchronously in the order they are defined in.
 
-**uses** - The uses steps pull in a predefined step that we can use rather than havin to recreate them from scratch 
+**uses** - The uses steps pull in a predefined step that we can use rather than having to recreate them from scratch 
 ourselves.
 
 We are using `actions/checkout` at version `v3` to check out the code from the repository that we are running the 
@@ -108,7 +110,9 @@ Commit & Push the new YAML file
 
 #### Watch the Pipeline run
 
-Go to the `Actions` tab on your GitHub repository
+Once these changes have been push the workflow we have created should run automatically.
+
+Go to the `Actions` tab on your GitHub repository, and you can watch it running
 
 ![Repository tabs with Actions tab highlighter](resources/action_tab.png)
 
@@ -148,7 +152,7 @@ Within the setting tab of your `cicd-lab` repository
 
 ![](resources/settings_tab.png)
 
-use the right hand menu to go to the Secrects for Actions page
+use the right hand menu to go to the Secrets for Actions page
 
 ![](resources/settings_menu.png)
 
@@ -211,7 +215,7 @@ tags have been pushed to the repository
 
 ![](resources/complete_two_actions.png)
 
-Know that we know that our application passes all of its test we can create a tag this will trigger that workflow that 
+Now that we know that our application passes all of its test we can create a tag this will trigger that workflow that 
 will containerise our application and push it to Docker Hub 
 
 1. `git tag 1.0 -m "Creating the first build of our application"`
