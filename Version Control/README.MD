@@ -10,6 +10,8 @@
 This is a short exercise to get you used to using Git to perform simple operation such as: cloning, staging, commiting,
 pushing, Pull/Merge Requests and rebasing.
 
+You can find an example repo of this activity [here](https://github.com/braddle/git-practice)
+
 ### Creating a new Repository
 
 Locate the + button to create new things at the top right of the screen and click New Repository
@@ -426,11 +428,14 @@ git add .
 git commit -m "Accidentally committing some secrets"
 ```
 
-By checking the log you can see a list of the commit. here are the last 3. We want to remove the last commit we made. To
-do this we can use the `reset` command.
+By checking the log you can see a list of the commit. here are the last 3. 
+
+![](resources/log_1.png)
+
+We want to remove the last commit we made. To do this we can use the `reset` command.
 
 There are two ways you can remove commits. The first uses the soft flag `--soft` the removes to the commit but returns 
-the changes to the unstaged area so you can edit the file and recommit the changes. The other way to remove the commit 
+the changes to the un-staged area, so you can edit the file and recommit the changes. The other way to remove the commit 
 is to use the hard flag `--hard` this deleted the commit, but does not bring back the changes.
 
 ```shell
@@ -441,4 +446,27 @@ git reset HEAD~1 --soft
 If you remove the commit using the soft flag we can look at a method to ensure we don't commit files that should not be 
 in the repository.
 
+If you check the log again you will see our previous commit has been deleted.
 
+![](resources/log_2.png)
+
+### Telling Git to Ignore Files
+
+Before we start you can un-stage the secrets file
+
+```shell
+ git restore --staged secrets.md
+```
+
+We want to keep the secrets file locally but not commit it to our repository. To do this we need to create a 
+`.gitignore` file we want to ignore our secrets file so the content of our ignore file should like the below
+
+```ignore
+secrets.md
+```
+
+you will see now that the secrets file still exists but is not seen by Git anymore.
+
+![](resources/ignore.png)
+
+add, commit push the changes
