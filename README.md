@@ -18,3 +18,4 @@
 9. Technical Debt & Code Quality
    1. [Open-Closed Principal](quality/fizzbuzz)
    2. [Static Code Analysis](quality/static-code-analysis)
+   3. [Gilded Rose - Refactoring Kata](quality/gilded-rose)
