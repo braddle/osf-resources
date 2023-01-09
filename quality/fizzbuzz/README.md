@@ -26,3 +26,16 @@ implement of rule that meets the next requirement/test.
 We have started the kata and adding test for cover negative numbers not being allowed and returning
 String the number given as a String.
 
+## Running Test
+
+To run the tests on this project you can use the Maven Wrapper
+
+### Linux/Mac
+
+- Install Dependencies `./mvnw.cmd clean install`
+- Run Tests `./mvnw.cmd test`
+
+### Windows
+
+- Install Dependencies `./mvnw.cmd clean install`
+- Run Tests `./mvnw.cmd test`

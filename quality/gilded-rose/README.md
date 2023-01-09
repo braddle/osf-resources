@@ -28,15 +28,17 @@ The `checkAllIsGold()` is the Gold Master test function. It loads the text from 
 When you are working on this task remember all the different [refactoring techniques](https://refactoring.guru/refactoring/techniques)
 available to you.
 
-To run the test you can use Gradle or Maven
+To run the test you can using the Maven Wrapper
 
-```shell
-./gradlew test
-```
+### Linux/Mac
 
-```shell
-./mvnw test
-```
+- Install Dependencies `./mvnw.cmd clean install`
+- Run Tests `./mvnw.cmd test`
+
+### Windows
+
+- Install Dependencies `./mvnw.cmd clean install`
+- Run Tests `./mvnw.cmd test`
 
 ### Gilded Rose Requirements Specification
 

@@ -11,8 +11,13 @@ We are going to run [PMD](https://pmd.github.io/) a static Code Analysis tool ov
 
 To run PMD over you need to run the following command
 
+**Linux/Mac**
 ```shell
-mvn pmd:pmd
+./mvnw pmd:pmd
+```
+Windows
+```shell
+./mvnw.cmd pmd:pmd
 ```
 
 This produces an XML report that is then rendered into a HTML report as well.
