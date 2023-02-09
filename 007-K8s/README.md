@@ -40,7 +40,7 @@ doing this not maintainable.
 #### Create a Deployment
 
 We now want to deployment within the Kubernetes cluster. Today we are going to deploy the Docker container we created 
-during the [container lab](../Containerisation/containerDemo/README.md) and deploy it to the Minikube Kubernetes cluster.
+during the [container lab](../006-containers/containerDemo/README.md) and deploy it to the Minikube Kubernetes cluster.
 
 We can do this using the `kubectl`. This is a local commandline tool that interacts with the Kubernetes API running 
 inside our cluster. The command below will create a deployment within our cluster called `demo-node`. It will pull the
@@ -50,7 +50,7 @@ container from your Docker Hub (Container Registry).
 kubectl create deployment demo-node --image={docker_hub_username}/demo-app:1.0.0
 ```
 
-**Note** If you have not completed the[container lab](../Containerisation/containerDemo/README.md) before starting this 
+**Note** If you have not completed the[container lab](../006-containers/containerDemo/README.md) before starting this 
 one you can use an instance I created on my account `braddle/demo-app:1.0.0`
 
 ##### Check the deployment

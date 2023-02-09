@@ -1,4 +1,4 @@
-package com.example.demo.fizzbuzz;
+package java.com.example.demo.fizzbuzz;
 
 public class FizzBuzzService {
 
